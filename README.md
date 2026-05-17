@@ -18,7 +18,12 @@ Built with **Python**, using `openai` SDK for API calls and `Rich` for terminal 
 ## Installation
 
 ```bash
-git clone https://github.com/your/repo.git
+# PyPI (recommended)
+pip install deepclaw-ai
+deepclaw
+
+# From source
+git clone https://github.com/boyin111-1/DeepClaw.git
 cd DeepClaw
 pip install -r requirements.txt
 python -m deepclaw
@@ -26,11 +31,12 @@ python -m deepclaw
 
 On first run, you'll be guided through setup: choose DeepSeek official API (API Key only) or third-party API (Key + URL + model).
 
-## Instructions
+## Usage
 
 | Command | Description |
 |---------|-------------|
-| `python -m deepclaw` | Launch the interactive CLI |
+| `deepclaw` | Launch interactive CLI (when installed via pip) |
+| `python -m deepclaw` | Launch from source |
 | `python -m deepclaw --model deepseek-v4-pro` | Start with a specific model |
 | `python -m deepclaw --plugin weather` | Load plugins at startup |
 | `python -m deepclaw --resume` | Restore last session |
@@ -39,7 +45,7 @@ On first run, you'll be guided through setup: choose DeepSeek official API (API 
 | Command | Description |
 |---------|-------------|
 | `/help` | Show all commands |
-| `/skill <name>` | List / load / unload skills (interactive) |
+| `/skill <name>` | List / load / unload skills |
 | `/plugin list` | Manage plugins |
 | `/model` | View / switch models |
 | `/config` | View / edit configuration |
@@ -47,16 +53,23 @@ On first run, you'll be guided through setup: choose DeepSeek official API (API 
 | `/export` | Export conversation to Markdown |
 | `/exit` | Quit (auto-saves session) |
 
-## Built-in Skills
+## Skill System
 
-| Skill | Description |
-|-------|-------------|
-| `python-coder` | Python coding assistant — PEP 8, type hints, testing |
-| `git-helper` | Git operations — conventional commits, safety checks |
-| `reviewer` | Code reviewer — configurable focus (security / performance / style), strict mode, max issues |
-| `supercoder` | Full project workflow — requirements → design → framework → implement → test → iterate |
+Skills are plain Markdown files with YAML front matter and Jinja2 templates. They define custom AI behavior — code review, project workflow, git operations, and more.
 
-Skills use Jinja2 templates with YAML parameter specs. Load via `/skill <name>` — interactive forms appear for skills with parameters.
+Place skills in `~/.deepclaw/skills/<name>/SKILL.md` and load with `/skill <name>`. Example:
+
+```yaml
+---
+name: My Reviewer
+params:
+  focus: { type: enum, values: [安全, 性能, 风格], default: 安全 }
+---
+# {{ name }}
+Focus on **{{ focus }}** when reviewing code.
+```
+
+Load with `/skill reviewer` — interactive parameter forms appear for skills with parameters.
 
 ## Plugin System
 
@@ -79,7 +92,7 @@ Extensions can: inject tools, register commands, subscribe to events, run backgr
 3. Commit your code
 4. Create Pull Request
 
-Skills and plugins can be contributed by adding a directory to `~/.deepclaw/skills/` or `~/.deepclaw/plugins/` with the required files — no fork needed for content contributions.
+Share skills and plugins via the [Discussions](https://github.com/boyin111-1/DeepClaw/discussions) tab.
 
 ## License
 
