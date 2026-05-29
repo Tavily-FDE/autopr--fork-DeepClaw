@@ -191,15 +191,15 @@ def cmd_config(agent: DeepClawAgent, args: str):
 
     if key == "model" and value:
         agent.model = value
-        save_config(cfg["base_url"], cfg["auth_token"], value)
+        save_config(cfg["base_url"], cfg["auth_token"], value, cfg.get("tavily_api_key", ""))
         _console.print(f"[green]模型已切换为: {value}[/green]")
     elif key == "url" and value:
         agent.client.base_url = value
-        save_config(value, cfg["auth_token"], cfg["model"])
+        save_config(value, cfg["auth_token"], cfg["model"], cfg.get("tavily_api_key", ""))
         _console.print(f"[green]API 地址已更新。[/green]")
     elif key == "key" and value:
         agent.client.api_key = value
-        save_config(cfg["base_url"], value, cfg["model"])
+        save_config(cfg["base_url"], value, cfg["model"], cfg.get("tavily_api_key", ""))
         _console.print(f"[green]API Key 已更新。[/green]")
     else:
         _console.print(f"[yellow]用法: /config [model|url|key <value>|reload][/yellow]")

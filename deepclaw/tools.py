@@ -394,12 +394,14 @@ def _search_tavily(query: str, api_key: str) -> str:
     response = client.search(query=query, max_results=8, search_depth="basic")
 
     results = []
-    for r in response.get("results", []):
+    result_count = 0
+    for i, r in enumerate(response.get("results", []), 1):
         title = r.get("title", "")
         url = r.get("url", "")
         snippet = r.get("content", "")[:250]
         if title:
-            results.append(f"{len(results)+1}. **{title}**")
+            result_count += 1
+            results.append(f"{i}. **{title}**")
             if url:
                 results.append(f"   {url}")
             if snippet:
@@ -408,7 +410,7 @@ def _search_tavily(query: str, api_key: str) -> str:
     if not results:
         return ""
 
-    return f"搜索 '{query}' — {len(results)} 条:\n" + "\n".join(results)
+    return f"搜索 '{query}' — {result_count} 条:\n" + "\n".join(results)
 
 
 def _search_web(query: str) -> str:

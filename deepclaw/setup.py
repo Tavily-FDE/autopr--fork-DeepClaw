@@ -78,7 +78,7 @@ def _setup_deepseek() -> dict:
     except ValueError:
         pass
 
-    save_config(DEFAULT_BASE_URL, token.strip(), model)
+    save_config(DEFAULT_BASE_URL, token.strip(), model, "")
     console.print(f"[green]配置已保存！模型: {model}[/green]")
     return {"base_url": DEFAULT_BASE_URL, "auth_token": token.strip(), "model": model}
 
@@ -106,6 +106,6 @@ def _setup_third_party() -> dict:
 
     model = Prompt.ask("模型名称", default=DEFAULT_MODEL).strip() or DEFAULT_MODEL
 
-    save_config(url, token.strip(), model)
+    save_config(url, token.strip(), model, "")
     console.print(f"[green]配置已保存！模型: {model}, 地址: {url}[/green]")
     return {"base_url": url, "auth_token": token.strip(), "model": model}

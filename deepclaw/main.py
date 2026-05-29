@@ -296,7 +296,7 @@ def main():
                     agent.model = new_model
                     from deepclaw.config import save_config
                     cfg = load_config()
-                    save_config(cfg["base_url"], cfg["auth_token"], new_model)
+                    save_config(cfg["base_url"], cfg["auth_token"], new_model, cfg.get("tavily_api_key", ""))
                     console.print(f"[green]模型已切换: {new_model} (已保存)[/green]")
                 continue
             else:
