@@ -24,6 +24,7 @@ def load_config() -> dict:
         "base_url": DEFAULT_BASE_URL,
         "auth_token": "",
         "model": DEFAULT_MODEL,
+        "tavily_api_key": "",
     }
 
     if CONFIG_FILE.exists():
@@ -35,6 +36,7 @@ def load_config() -> dict:
             config["base_url"] = file_cfg.get("base_url", DEFAULT_BASE_URL)
             config["auth_token"] = file_cfg.get("auth_token", "")
             config["model"] = file_cfg.get("model", DEFAULT_MODEL)
+            config["tavily_api_key"] = file_cfg.get("tavily_api_key", "")
         except Exception:
             pass
 
@@ -44,12 +46,13 @@ def load_config() -> dict:
     return config
 
 
-def save_config(base_url: str, auth_token: str, model: str):
+def save_config(base_url: str, auth_token: str, model: str, tavily_api_key: str = ""):
     """保存配置到 ~/.deepclaw/config.json。"""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
     data = {
         "base_url": base_url,
         "auth_token": auth_token,
         "model": model,
+        "tavily_api_key": tavily_api_key,
     }
     CONFIG_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")

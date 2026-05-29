@@ -5,6 +5,8 @@ import subprocess
 import httpx
 from pathlib import Path
 
+from deepclaw.config import load_config
+
 # Tool definitions, compatible with OpenAI/DeepSeek function-calling format.
 TOOLS = [
     {
@@ -376,9 +378,52 @@ def _execute_command(command: str) -> str:
         return f"错误: 命令执行失败 — {e}"
 
 
+def _get_tavily_api_key() -> str:
+    """Return Tavily API key from env var or config file, or empty string."""
+    key = os.environ.get("TAVILY_API_KEY", "")
+    if not key:
+        key = load_config().get("tavily_api_key", "")
+    return key
+
+
+def _search_tavily(query: str, api_key: str) -> str:
+    """Search using Tavily and return formatted results."""
+    from tavily import TavilyClient
+
+    client = TavilyClient(api_key=api_key)
+    response = client.search(query=query, max_results=8, search_depth="basic")
+
+    results = []
+    for r in response.get("results", []):
+        title = r.get("title", "")
+        url = r.get("url", "")
+        snippet = r.get("content", "")[:250]
+        if title:
+            results.append(f"{len(results)+1}. **{title}**")
+            if url:
+                results.append(f"   {url}")
+            if snippet:
+                results.append(f"   {snippet}")
+
+    if not results:
+        return ""
+
+    return f"搜索 '{query}' — {len(results)} 条:\n" + "\n".join(results)
+
+
 def _search_web(query: str) -> str:
     if not query.strip():
         return "错误: 搜索关键词不能为空"
+
+    # Tavily 搜索（优先）
+    tavily_key = _get_tavily_api_key()
+    if tavily_key:
+        try:
+            tavily_result = _search_tavily(query, tavily_key)
+            if tavily_result:
+                return tavily_result
+        except Exception:
+            pass  # Fall through to Bing/DuckDuckGo
 
     results = []
     # Bing 搜索
